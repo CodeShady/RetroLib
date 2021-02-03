@@ -150,6 +150,10 @@ class CPU:
             self.ZFLAG = 1
             self.X = 0
     
+    ## LOAD FROM MEMORY ##
+    def lfm(self, location):
+        self.A = self.RAM.MEM[self.maxMemoryNum(location)]
+
     ## LD-A,X,Y ##
     def lda(self, char):
         self.A = self.maxByteNum(char)
