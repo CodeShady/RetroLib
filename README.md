@@ -23,8 +23,11 @@ ram.dumpMemory()	# Dump all memory to console (256 Values Total)
 RetroLib currently has **3** important classes.
 
 **RAM** - This is your "Work Memory". You can use all 256 bytes freely.
+
 **CPU** - This is your programs' actual brain. You call commands here.
+
 **PPU** - This is your "Picture Processing Unit". This contains mainly screen colors.
+
 **PPU RAM** - This is the information that will be showed on the screen.
 
 ## PPU RAM
@@ -33,11 +36,17 @@ The PPU has 512 bytes of RAM. Each byte represents a pixel on the screen. Depend
 
 ### PPU Colors
 **0** - Black
+
 **1** - Red
+
 **2** - Green
+
 **3** - Yellow
+
 **4** - Purple
+
 **5** - Cyan
+
 **255** - White
 
 ```
@@ -90,6 +99,7 @@ cpu.jmp()
 Branching is just like **.jmp()**, but uses conditions. Branching is important for making your program doing *this* if *that*.
 
 **.bne()** - **B**ranch if **N**ot **E**qual (Branch if ZFLAG is **not** set).
+
 **.beq()** - **B**ranch if **E**qual (Branch if ZFLAG **is** set).
 
 ```
@@ -137,5 +147,4 @@ Dump memory to the console. The result should look something like this:
 [5, 100, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ```
 Each **number** in memory represents a one byte in memory.
-
 
