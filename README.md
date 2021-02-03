@@ -179,6 +179,10 @@ cpu.cmp(100)	# ZFlag will be set because 100 = 100. (Z = 1)
 `cpu.txa()` - Transfer **X register** into **A register**.
 `cpu.tya()` - Transfer **Y register** into **A register**.
 
+### Loading From Memory(RAM)
+`cpu.lfm(LOCATION)` - **L**oad value **F**rom **M**emory into **X register**. (NOTE: This may be changed in the future, but I'll use this for now.)
+
+
 ### Incrementing & Decrementing 
 You can increment and decrement the **X and Y** register. Because the **A** register is almost only used for math, it shouldn't need this feature.
 ```
