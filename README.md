@@ -175,8 +175,11 @@ cpu.cmp(100)	# ZFlag will be set because 100 = 100. (Z = 1)
 
 ### Transferring Registers
 `cpu.tax()` - Transfer **A register** into **X register**.
+
 `cpu.tay()` - Transfer **A register** into **Y register**.
+
 `cpu.txa()` - Transfer **X register** into **A register**.
+
 `cpu.tya()` - Transfer **Y register** into **A register**.
 
 ### Loading From Memory(RAM)
