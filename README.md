@@ -35,7 +35,7 @@ RetroLib currently has **3** important classes.
 ## Work RAM
 As the programmer, you get 256 bytes in memory called "Work RAM". Work RAM is free to use. You can save important data here (Player's health, Level names, Player's X and Y position).
 
-**Work RAM start's at: $00**, and ends at **$FF**.
+**Work RAM start's at: $00**, and ends at **$FF** (hex).
 
 ## PPU RAM
 Unlike the Work RAM, the PPU RAM isn't for storing important information. You can use the PPU RAM to draw on the screen--it's pretty easy.
@@ -44,7 +44,7 @@ The PPU has 512 bytes of RAM. Each byte represents a pixel on the screen. Depend
 
 Each time ``cpu.display()`` is called, the PPU will reach each byte in the PPU RAM, then it'll display each pixel to the screen.
 
-**The PPU RAM start's at: $00**, and ends at **$FF**.
+**The PPU RAM start's at: $100**, and ends at **$300** (hex).
 
 
 ### Showing RAM - *.dumpMemory()*
