@@ -8,12 +8,32 @@
 ### RAM CLASS ###
 class RAM:
     def __init__(self):
+        self.PPU = PPU()
         self.MEM = []
+
+        self.MEMORY_RANGE = 768
         # Load Zeros Into Memory
-        [ self.MEM.append(0) for x in range(256) ]
+        [ self.MEM.append(0) for x in range(self.MEMORY_RANGE) ]
 
     def dumpMemory(self):
-        print(self.MEM)
+        lineBreakPoint = 10
+        lineCount = 0
+        lineNumber = 0
+
+        print("\033[1;33m" + hex(lineNumber) + "\033[0m\t", end="")
+        for byte in self.MEM:
+            if lineCount >= lineBreakPoint:
+                lineNumber += 10
+                print("\n\033[1;33m" + hex(lineNumber) + "\033[0m\t", end="")
+                lineCount = 0
+            
+            if len(hex(byte)) == 3:
+                print(hex(byte)[2:] + "0", end=", ")
+            else:
+                print(hex(byte)[2:], end=", ")
+
+            lineCount += 1
+
 
 ### CPU CLASS ###
 class CPU:
@@ -21,31 +41,76 @@ class CPU:
     # TODO: [ ] Create STACK Class (For adding variables to "The Stack")
     
     def __init__(self, memory, ppu):
-        self.PPU = ppu
         self.RAM = memory
+        self.PPU = ppu
         self.A = 0
         self.X = 0
         self.Y = 0
         self.ZFLAG = 0
     
-    # COMMANDS #
-    def fixNumber(self, char):
+    ## COMMANDS ##
+    def maxMemoryNum(self, char):
         if isinstance(char, str):
             char = int(char, 16) # Char is a string
         char = abs(char)
-        if char > 255:
-            char = 255
+        if char > 768:
+            char = 768
         return char
     def dumpRegisters(self):
         print("A = " + str(self.A))
         print("X = " + str(self.X))
         print("Y = " + str(self.Y))
         print("Z = " + str(self.ZFLAG))
+    def hex(self, string):
+        if isinstance(string, str):
+            return int(string, 16)
+        return False
+    def maxByteNum(self, char):
+        if isinstance(char, str):
+            char = int(char, 16) # Char is a string
+        char = abs(char)
+        if char > 255:
+            char = 255
+        return char
+
+    ## DISPLAY PPU ##
+    def display(self):
+        # Send memory to PPU to display to console
+        memory = self.RAM.MEM[256:]
+        self.PPU.display(memory)
+        
 
     ## ZFLAG ##
     def clz(self):
         # Clear the Z-FLAG
         self.ZFLAG = 0
+
+    ## COMPARING A,X,Y ##
+    def cmp(self, number):
+        if self.A == self.maxByteNum(number):
+            self.ZFLAG = 1
+        else:
+            self.ZFLAG = 0
+    def cpx(self, number):
+        if self.X == self.maxByteNum(number):
+            self.ZFLAG = 1
+        else:
+            self.ZFLAG = 0
+    def cpy(self, number):
+        if self.Y == self.maxByteNum(number):
+            self.ZFLAG = 1
+        else:
+            self.ZFLAG = 0
+
+    ## TRANSFERRING A,X,Y ##
+    def tax(self):
+        self.X = self.A
+    def tay(self):
+        self.Y = self.A
+    def txa(self):
+        self.A = self.X
+    def tya(self):
+        self.A = self.Y
 
     ## JUMPING ##
     def jmp(self, labelName):
@@ -87,24 +152,23 @@ class CPU:
     
     ## LD-A,X,Y ##
     def lda(self, char):
-        self.A = self.fixNumber(char)
+        self.A = self.maxByteNum(char)
     def ldx(self, char):
-        self.X = self.fixNumber(char) 
+        self.X = self.maxByteNum(char) 
     def ldy(self, char):
-        self.Y = self.fixNumber(char)
+        self.Y = self.maxByteNum(char)
 
     ## ST-A,X,Y ##
     def sta(self, location):
-        self.RAM.MEM[self.fixNumber(location)] = self.A
+        self.RAM.MEM[self.maxMemoryNum(location)] = self.A
     def stx(self, location):
-        self.RAM.MEM[self.fixNumber(location)] = self.X
+        self.RAM.MEM[self.maxMemoryNum(location)] = self.X
     def sty(self, location):
-        self.RAM.MEM[self.fixNumber(location)] = self.Y
+        self.RAM.MEM[self.maxMemoryNum(location)] = self.Y
 
 ## PICTURE PROCESSING UNIT ##
 class PPU:
     def __init__(self):
-        self.MEM = []
         self.SCREEN_WIDTH = 32
         self.COLORS = {
             0: self.BLACK_BACKGROUND,
@@ -115,15 +179,10 @@ class PPU:
             5: self.CYAN_BACKGROUND,
             255: self.WHITE_BACKGROUND,
         }
-        # Load Zeros Into Memory
-        [ self.MEM.append(0) for x in range(512) ]
 
-    def dumpMemory(self):
-        print(self.MEM)
-
-    def display(self):
+    def display(self, MEMORY):
         counter = 0
-        for byte in self.MEM:
+        for byte in MEMORY:
             if counter == self.SCREEN_WIDTH:
                 print(self.RESET + "")
                 counter = 0
