@@ -183,7 +183,7 @@ cpu.cmp(100)	# ZFlag will be set because 100 = 100. (Z = 1)
 `cpu.tya()` - Transfer **Y register** into **A register**.
 
 ### Loading From Memory(RAM)
-`cpu.lfm(LOCATION)` - **L**oad value **F**rom **M**emory into **X register**. (NOTE: This may be changed in the future, but I'll use this for now.)
+`cpu.lfm(LOCATION)` - **L**oad value **F**rom **M**emory into **A register**. (NOTE: This may be changed in the future, but I'll use this for now.)
 
 
 ### Incrementing & Decrementing 
