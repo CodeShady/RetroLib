@@ -44,7 +44,7 @@ The PPU has 512 bytes of RAM. Each byte represents a pixel on the screen. Depend
 
 Each time ``cpu.display()`` is called, the PPU will reach each byte in the PPU RAM, then it'll display each pixel to the screen.
 
-**The PPU RAM start's at: $100**, and ends at **$300** (hex).
+**The PPU RAM start's at: $100**, and ends at **$2FF** (hex).
 
 
 ### Showing RAM - *.dumpMemory()*
