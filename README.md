@@ -1,5 +1,29 @@
 # RetroLib - *a 6502 CPU*
 
+## Simple Example
+```
+from RetroLang import RAM, CPU, PPU
+from time import sleep
+from os import system
+from random import randint, choice
+
+# Create RAM & PPU
+ram = RAM()
+ppu = PPU()
+# Assign RAM & PPU to CPU
+cpu = CPU(ram, ppu)
+
+while True:
+	# Loop every pixel in PPU memory.
+	for i in range(cpu.hex("100"), cpu.hex("300")):
+		cpu.ldx("#$" + str(choice([1, 2, 255])))	# Choose color 1(Red), 2(Green) and 255(White) randomly
+		cpu.stx(i)	# Store A register into the current memory location
+
+		system("clear||cls")	# Clear the console
+		cpu.display()	# Turn on the display
+		sleep(0.2)	# Wait a bit...
+```
+
 ## Setup
 To start a RetroLang CPU, **first create a RAM and PPU object**, then **"attach"** both of them to the **CPU** object.
 ```
@@ -11,7 +35,7 @@ That's it!
 Now, you can use the **CPU** variable to run commands.
 For example:
 ```
-cpu.lda("ff")	# Store the hex code "FF" into A register
+cpu.lda("#$ff")	# Store the hex code "FF" into A register
 cpu.sta("00")	# Store the A register into memory location "00"
 ```
 Although you shouldn't need to use the **RAM variable**, you can still use some of it's debugging tools in it. **The "Working RAM" only has 256 bytes of RAM! (255 + extra byte in the 0th place)**. That isn't a lot of memory, but remember that you have unlimited **PROM**/**ROM**.
@@ -95,7 +119,7 @@ Each **number** in memory represents a one byte in memory.
 
 For example, let's display red onto the first pixel of the screen.
 ```
-cpu.lda(1)	# Load number 2(red) into A register
+cpu.lda("#$1")	# Load number 1(red) into A register
 cpu.sta("100")	# Store A register into memory location $100 ("$" means hex)
 
 cpu.display()	# Turn on the screen
@@ -111,7 +135,7 @@ The Zero flag is set to the **number ZERO** by default. When the zero flag is "*
 For example, this program will print "Hello, World!" 10 times with the help of the zero flag.
 ```
 def main():
-	cpu.ldy(10)	# Load number 10 into A register
+	cpu.ldy("#10")	# Load number 10 into A register
     cpu.jmp(loop)	# Jump to "loop()" function
 
 def loop():
@@ -182,10 +206,6 @@ cpu.cmp(100)	# ZFlag will be set because 100 = 100. (Z = 1)
 
 `cpu.tya()` - Transfer **Y register** into **A register**.
 
-### Loading From Memory(RAM)
-`cpu.lfm(LOCATION)` - **L**oad value **F**rom **M**emory into **A register**. (NOTE: This may be changed in the future, but I'll use this for now.)
-
-
 ### Incrementing & Decrementing 
 You can increment and decrement the **X and Y** register. Because the **A** register is almost only used for math, it shouldn't need this feature.
 ```
@@ -199,19 +219,44 @@ cpu.dey()
 ```
 
 ### *.ld_()*
-**L**oa**d** data into **_** register. The data can either be a **int** or a **hex code**.
+**L**oa**d** data into **_** register. The data can either be an **int**, **binary**, **hex value** or **memory location**.
+
+You can either load a literal number into a register, or you can load a value in memory into a register. Here's a guide:
+
+**#** - Means number.
+
+**$** - Means hex.
+
+**%** - Means binary.
+
+
+**#$** - Means literal hex value as a number.
+
+**#%** - Means literal binary value as a number.
+
+**$** - Means hex location in memory.
+
+**%** - Means binary location in memory.
+
+
 ```
-cpu.lda(100)
-cpu.ldx(255)
-cpu.ldy("ff")
+# Loading Numbers
+cpu.lda("#15")	# Load number 15 into a register.
+cpu.ldx("#$100")	# Load number $100(in hex) into X register.
+cpu.ldy("#%00000010")	# Load number 2(in binary) into Y register.
+
+# Loading data from memory
+cpu.ldx("$50")	# Load value at memory location $50(hex) into X register.
+cpu.ldy("%00000010")	# Load value at memory location 2(in binary) into Y register.
 ```
 
 ### *.st_()*
 **St**ore register into memory location. The location can be an **int** or a **hex code**.
+
 ```
-cpu.sta(100)
-cpu.stx("00")
-cpu.sty("2E")
+cpu.sta(100)	# Store A register into memory location #100
+cpu.stx("00")	# Store X register into memory location $00(hex)
+cpu.sty("2E")	# Store Y register into memory location $2E(hex)
 ```
 
 ### *.display()*
