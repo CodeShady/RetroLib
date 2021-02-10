@@ -33,13 +33,15 @@ class RAM:
                 print(hex(byte)[2:], end=", ")
 
             lineCount += 1
+        print("")
 
 
 ### CPU CLASS ###
 class CPU:
     # TODO: [X] Create PPU Class (For displaying Ascii art to console)
     # TODO: [ ] Create STACK Class (For adding variables to "The Stack")
-    
+    # TODO: [X] Rework the LDA & STA functions (AKA, remove the lfm() function).
+
     def __init__(self, memory, ppu):
         self.RAM = memory
         self.PPU = ppu
@@ -49,12 +51,53 @@ class CPU:
         self.ZFLAG = 0
     
     ## COMMANDS ##
-    def maxMemoryNum(self, char):
+    def _realValue(self, value):
+        # If char is "#$__" use HEX
+        firstChar = value[:1]
+        secondChar = value[1:2]
+        
+        if firstChar == "#":
+            # Value is a NUMBER
+            if secondChar == "$":
+                # Retrun HEX VALUE
+                hexNum = self.hex(value[2:])
+                if hexNum > 255:
+                    hexNum = 255
+                return abs(hexNum)
+            elif str.isnumeric(value[1:]):
+                # Return DECIMAL VALUE
+                return value[1:]
+            elif secondChar == "%":
+                # Return BINARY VALUE
+                binNum = self.binary(value[2:])
+                if binNum > 255:
+                    binNum = 255
+                return abs(binNum)
+
+        elif firstChar == "$":
+            # Value is HEX (GET MEMORY)
+            value = self.hex(value[1:])
+            memoryLength = len(self.RAM.MEM)-1
+            if value > memoryLength:
+                value = memoryLength
+            return self.RAM.MEM[abs(value)]
+        elif firstChar == "%":
+            # Value is BINARY (GET MEMORY)
+            value = self.binary(value[1:])
+            memoryLength = len(self.RAM.MEM)
+            if value > memoryLength:
+                value = memoryLength
+            return self.RAM.MEM[abs(value)]
+
+        self._bug("Trying to load an unknown int into register.")
+    def _bug(self, message):
+        print("\033[41m[ERROR]\033[0m " + str(message))
+    def _maxMemoryNum(self, char):
         if isinstance(char, str):
             char = int(char, 16) # Char is a string
         char = abs(char)
-        if char > 768:
-            char = 768
+        if char > 767:
+            char = 767
         return char
     def dumpRegisters(self):
         print("A = " + str(self.A))
@@ -64,7 +107,11 @@ class CPU:
     def hex(self, string):
         if isinstance(string, str):
             return int(string, 16)
-        return False
+        self._bug("Trying to convert a non-HEX value.")
+    def binary(self, string):
+        if isinstance(string, str):
+            return int(string, 2)
+        self._bug("Trying to convert a non-BINARY value.")
     def maxByteNum(self, char):
         if isinstance(char, str):
             char = int(char, 16) # Char is a string
@@ -78,7 +125,6 @@ class CPU:
         # Send memory to PPU to display to console
         memory = self.RAM.MEM[256:]
         self.PPU.display(memory)
-        
 
     ## ZFLAG ##
     def clz(self):
@@ -150,25 +196,22 @@ class CPU:
             self.ZFLAG = 1
             self.X = 0
     
-    ## LOAD FROM MEMORY ##
-    def lfm(self, location):
-        self.A = self.RAM.MEM[self.maxMemoryNum(location)]
-
     ## LD-A,X,Y ##
     def lda(self, char):
-        self.A = self.maxByteNum(char)
+        self.A = int(self._realValue(char))
     def ldx(self, char):
-        self.X = self.maxByteNum(char) 
+        self.X = int(self._realValue(char))
     def ldy(self, char):
-        self.Y = self.maxByteNum(char)
+        self.Y = int(self._realValue(char))
 
     ## ST-A,X,Y ##
     def sta(self, location):
-        self.RAM.MEM[self.maxMemoryNum(location)] = self.A
+        self.RAM.MEM[self._maxMemoryNum(location)] = self.A
     def stx(self, location):
-        self.RAM.MEM[self.maxMemoryNum(location)] = self.X
+        self.RAM.MEM[self._maxMemoryNum(location)] = self.X
     def sty(self, location):
-        self.RAM.MEM[self.maxMemoryNum(location)] = self.Y
+        self.RAM.MEM[self._maxMemoryNum(location)] = self.Y
+
 
 ## PICTURE PROCESSING UNIT ##
 class PPU:
