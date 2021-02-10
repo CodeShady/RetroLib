@@ -16,8 +16,9 @@ cpu = CPU(ram, ppu)
 while True:
 	# Loop every pixel in PPU memory.
 	for i in range(cpu.hex("100"), cpu.hex("300")):
-		cpu.ldx("#$" + str(choice([1, 2, 255])))	# Choose color 1(Red), 2(Green) and 255(White) randomly
-		cpu.stx(i)	# Store A register into the current memory location
+		# Choose either color 1(Red), 2(Green) and 255(White)
+		cpu.ldx("#$" + str(choice([1, 2, 255])))
+		cpu.stx(i) # Store A register into the current memory location
 
 		system("clear||cls")	# Clear the console
 		cpu.display()	# Turn on the display
