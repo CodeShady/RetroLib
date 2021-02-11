@@ -40,20 +40,15 @@ cpu.lda("#$ff")	# Store the hex code "FF" into A register
 cpu.sta("00")	# Store the A register into memory location "00"
 ```
 Although you shouldn't need to use the **RAM variable**, you can still use some of it's debugging tools in it. **The "Working RAM" only has 256 bytes of RAM! (255 + extra byte in the 0th place)**. That isn't a lot of memory, but remember that you have unlimited **PROM**/**ROM**.
-```
-ram.dumpMemory()	# Dump all memory to console (768 Values Total)
-```
 
 ## Important Programmer Knowledge
 RetroLib currently has **3** important classes.
 
-**RAM** - This is your "Work Memory". You can use all 256 bytes freely.
+**RAM** - This contains your "Work Memory", and your PPU Memory.
 
 **CPU** - This is your programs' actual brain. You call commands here.
 
 **PPU** - This is your "Picture Processing Unit". This contains mainly colors.
-
-**PPU RAM** - Each byte represents a pixel on the screen in the PPU RAM.
 
 ## Random-Access Memory (RAM)
 
@@ -67,13 +62,17 @@ Unlike the Work RAM, the PPU RAM isn't for storing important information. You ca
 
 The PPU has 512 bytes of RAM. Each byte represents a pixel on the screen. Depending on the value of the byte, it will show a different color.
 
-Each time ``cpu.display()`` is called, the PPU will reach each byte in the PPU RAM, then it'll display each pixel to the screen.
+Each time ``cpu.display()`` is called, the PPU will read every byte in the PPU RAM, then it'll display each pixel to the screen.
 
 **The PPU RAM start's at: $100**, and ends at **$2FF** (hex).
 
 
 ### Showing RAM - *.dumpMemory()*
 To view all the data in the program's memory. Use this command.
+
+```
+ram.dumpMemory()	# Dump all memory to console (768 Values Total)
+```
 
 The result should look something like this:
 ```
@@ -136,13 +135,13 @@ The Zero flag is set to the **number ZERO** by default. When the zero flag is "*
 For example, this program will print "Hello, World!" 10 times with the help of the zero flag.
 ```
 def main():
-	cpu.ldy("#10")	# Load number 10 into A register
-    cpu.jmp(loop)	# Jump to "loop()" function
+	cpu.ldy("#10") # Load number 10 into A register
+	cpu.jmp(loop) # Jump to "loop()" function
 
 def loop():
-    print("Hello, World!")	# Print "Hello, World"
-    cpu.dey()	# Decrement the Y register
-    cpu.bne(loop)	# Branch if Not Equal to Zero ( if Z != 1 )
+	print("Hello, World!") # Print "Hello, World"
+	cpu.dey() # Decrement the Y register
+	cpu.bne(loop) # Branch if Not Equal to Zero ( if Z != 1 )
 
 ```
 
@@ -155,11 +154,11 @@ cpu.clz()	# Clear Z Flag
 Jump to a "**label**"(function). Only put the function name, **not the "()"**.
 ```
 def firstFunc():
-	cpu.lda("ff")
+	cpu.lda("#$FF")
 	cpu.jmp(secondFunc)
 
 def secondFunc():
-	cpu.sta(0)
+	cpu.sta("00")
 
 cpu.jmp()
 ```
@@ -169,13 +168,9 @@ cpu.jmp()
 ### Branching
 Branching is just like **.jmp()**, but uses conditions. Branching is important for making your program doing *this* if *that*.
 
-`cpu.beq()` - Branch if zero flag is set to 1.**( Z = 1 )**
-`cpu.bne()` - Branch if zero flag is set to 0. **( Z = 0 )**
+`.bne()` - **B**ranch if **N**ot **E**qual (Branch if ZFLAG is **not** set).
 
-
-**.bne()** - **B**ranch if **N**ot **E**qual (Branch if ZFLAG is **not** set).
-
-**.beq()** - **B**ranch if **E**qual (Branch if ZFLAG **is** set).
+`.beq()` - **B**ranch if **E**qual (Branch if ZFLAG **is** set).
 
 ```
 def loadPlayerLife():
